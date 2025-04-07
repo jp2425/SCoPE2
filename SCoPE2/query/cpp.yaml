@@ -1,0 +1,151 @@
+
+generalize_functions:
+    query: |
+      ; Capture IDs and function names with namespaces.
+      (function_declarator 
+          declarator: [
+          ((identifier) @function)
+          ( _ name: (identifier) @function)])
+      ;(function_definition   
+      ;declarator: (identifier) @function)
+    
+      ; (function_declarator 
+      ;  declarator: (_) @function) 
+
+    QUERY_ID: function
+
+swap_operators:
+  query: |
+    (binary_expression
+      operator: [ "<" ">" "<=" ">=" ]
+    ) @swap_expressions
+
+  QUERY_ID: swap_expressions
+  SUPPORTED_OPERATORS: ["<", ">", "<=",">="]
+
+parameter_names_function_declaration:
+    query: |
+      ;(parameter_declaration  
+      (parameter_declaration  
+      declarator: [ 
+          ( _  (_(identifier)  @variable)) ;qqr um e depois um identificador (apanha os & dos pointers...) 
+    
+        ( _ (identifier)  @variable) ;qqr um e depois um identificador (apanha os & dos pointers...) 
+       (identifier) @variable 
+       ]) 
+       
+      ( optional_parameter_declaration  
+      declarator: [ 
+          ( _  (_(identifier)  @variable)) ;qqr um e depois um identificador (apanha os & dos pointers...) 
+    
+        ( _ (identifier)  @variable) ;qqr um e depois um identificador (apanha os & dos pointers...) 
+       (identifier) @variable 
+       ])
+      ;  declarator: [ 
+      ; ( _ (identifier)  @variable)
+      ; (identifier) @variable 
+      ; ]
+    
+    QUERY_ID: variable
+
+generalize_vars:
+    query: |
+      ; (init_declarator 
+      ; declarator: (identifier) @variable) 
+      
+      (declaration 
+        declarator:  [ 
+        (identifier) @variable 
+        ( _ (identifier) @variable )  
+        ( _ ( _ (identifier) @variable ))
+     
+       ]
+       );  the '_' matches with any node.... https://tree-sitter.github.io/tree-sitter/using-parsers
+      
+       ; declarator:  [ 
+       ; (identifier) @variable 
+       ; ( _ ( _ (identifier) @variable )) 
+     
+       ;]
+      
+      ;(parameter_declaration  JUNTAR O PARAMETER DECLARATION das funcoes >< ================= remover se for preciso
+      (parameter_declaration  
+      declarator: [ 
+          ( _  (_(identifier)  @variable)) ;qqr um e depois um identificador (apanha os & dos pointers...) 
+    
+        ( _ (identifier)  @variable) ;qqr um e depois um identificador (apanha os & dos pointers...) 
+       (identifier) @variable 
+       ]) 
+       
+      ( optional_parameter_declaration  
+      declarator: [ 
+          ( _  (_(identifier)  @variable)) ;qqr um e depois um identificador (apanha os & dos pointers...) 
+    
+        ( _ (identifier)  @variable) ;qqr um e depois um identificador (apanha os & dos pointers...) 
+       (identifier) @variable 
+       ])
+      ;  declarator: [ 
+      ; ( _ (identifier)  @variable)
+      ; (identifier) @variable 
+      ; ]
+
+    QUERY_ID: variable
+      
+
+repetition_structures:
+    for_structure:
+      query: |
+        (for_statement  
+        (declaration
+        [
+            declarator: (_
+               (identifier) @var_id )
+            declarator: 
+               (identifier) @var_id 
+         ]     
+        ) @declaration
+         condition: ( _ ) @condition
+         update: ( _) @update
+         body: (_) @body
+        ) @for_structure
+
+      QUERY_ID: for_structure, var_id, condition, update, body
+
+    while_structure:
+      query: (while_statement) @while_statement
+
+remove_comments:
+    query: (comment) @comment
+    QUERY_ID: comment
+
+save_comments:
+    query: (comment) @comment
+    QUERY_ID: comment
+
+
+
+save_strings:
+    query: (string_literal) @string ;the node 'string_content' gives the content of the string
+    QUERY_ID: string
+
+generalize_strings:
+    query: (string_literal) @string ;the node 'string_content' gives the content of the string
+    QUERY_ID: string
+
+replace_equivalent_values:
+  literals:
+      "true": 1==1
+      "false": 1==2
+
+ReplaceForWithWhileTr:
+  query: |
+    (for_statement
+      initializer: (_) @for_initializer
+      condition: (_) @for_condition
+      update: (_) @for_update
+      body: (_) @for_body
+    ) @for_statement
+
+
+dead_code_injection:
+  dead_code: ["int alkdlp = 0;", "char *asdasdajy;", "if(1==2){\n int test = 0;\n printf(\"%d\", test);}\n}"]
