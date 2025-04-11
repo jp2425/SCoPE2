@@ -27,8 +27,8 @@ class PreProcessingService(ProcessService):
         the raw source code before being parsed
     """
 
-    def __init__(self, repo_context: RepositoryContext):
-        super().__init__()
+    def __init__(self, repo_context: RepositoryContext, ignore_phases= True):
+        super().__init__( ignore_phases)
         self._repo = repo_context.tree_sitter_repo
         self.repo_context = repo_context
 

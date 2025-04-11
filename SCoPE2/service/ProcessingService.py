@@ -6,8 +6,8 @@ from ..transformation.phases import Phase
 import warnings
 
 class ProcessingService(ProcessService):
-    def __init__(self, repo:RepositoryContext):
-        super().__init__()
+    def __init__(self, repo:RepositoryContext, ignore_phases = True):
+        super().__init__(ignore_phases)
         self._repo = repo
 
     def process(self, dto_processing: PreProcessingDto) -> ProcessingDto:

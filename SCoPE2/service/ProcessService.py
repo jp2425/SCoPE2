@@ -9,15 +9,15 @@ from SCoPE2.transformation.phases import Phase
 
 class ProcessService(ABC):
 
-    def __init__(self):
-        pass
+    def __init__(self, ignore_phases = True):
+        self.ignore_phases = ignore_phases
 
     def run_transformation_in_phase(self, transformations, entry:ProcessingEntry, phase: Phase) -> (ProcessingEntry, List[Transformation]):
         skipped_one = False
         transformations_to_remove = []
         for transformation in transformations:
             if transformation.transformation_phase == phase or (
-                    transformation.transformation_phase == Phase.ANY and skipped_one):
+                    transformation.transformation_phase == Phase.ANY and skipped_one) or self.ignore_phases:
                 try:
                     entry = transformation.run(entry)
                 except Exception as e:

@@ -24,7 +24,10 @@ class SwapOperatorsTr(QueryTransformation):
         self._repo = repo_context.tree_sitter_repo
 
     def run(self, entry: ProcessingEntry) -> ProcessingEntry:
-        expressions = entry.detection_result[self._DEFAULT_CONFIG["QUERY_ID"]]
+        try:
+            expressions = entry.detection_result[self._DEFAULT_CONFIG["QUERY_ID"]]
+        except:
+            raise Exception("TreeSitter didn't returned any " + self._DEFAULT_CONFIG['QUERY_ID'])
         supported_operators = self._DEFAULT_CONFIG["SUPPORTED_OPERATORS"]
         temp = sorted(supported_operators, key=len, reverse=True)
         regex_ops = '|'.join(re.escape(op) for op in temp)
@@ -35,7 +38,6 @@ class SwapOperatorsTr(QueryTransformation):
         for expression in expressions:
             match = re.match(padrao, expression)
             if match:
-                print(match)
                 x, operator, y = match.groups()
                 X, new_op, Y = self.swap_operator(x,operator, y)
                 entry.code = entry.code.replace(expression, str(X)+" "+str(new_op)+" "+str(Y))

@@ -7,3 +7,7 @@ from .ReplaceStringsTr import ReplaceStringsTr
 from .ReplaceVariableNamesTr import ReplaceVariableNamesTr
 from .SaveCommentsTr import SaveCommentsTr
 from .SaveStringsTr import SaveStringsTr
+from .DeadCodeInjectionTr import DeadCodeInjectionTr
+from .PrettifyCodeTr import PrettifyCodeTr
+from .ReplaceForWithWhileTr import ReplaceForWithWhileTr
+from .SwapOperatorsTr import SwapOperatorsTr

@@ -1,10 +1,12 @@
+from random import random
+
 from ...domain.ProcessingEntry import ProcessingEntry
 from ...repo.RepositoryContext import RepositoryContext
 from ..QueryTransformation import QueryTransformation
 import re
 from ..phases import Phase
 from ..renameStrategy.simpleReplacement import SimpleReplacement
-
+import random
 
 class ReplaceVariableNamesTr(QueryTransformation):
 
@@ -12,7 +14,7 @@ class ReplaceVariableNamesTr(QueryTransformation):
     _PHASE = Phase.PROCESSING
     #the "safe" config adds after all replaced variables the special token "@TOKEN@". This is to avoid future transformations to mess with the new vars
     #however, some transformations may not like that.
-    _DEFAULT_CONFIG = {"QUERY_ID":"variable", "safe":True}
+    _DEFAULT_CONFIG = {"QUERY_ID":"variable", "safe":False, "replacement_probability":100}
 
     def __init__(self, repo_context: RepositoryContext, config: dict, **kwargs):
         self._DEFAULT_CONFIG.update(dict({"rename_strategy": SimpleReplacement()})) #default replacement strategy. Can be overwritten by the config parameter value
@@ -42,17 +44,17 @@ class ReplaceVariableNamesTr(QueryTransformation):
         except:
             raise Exception("TreeSitter didn't returned any "+self._DEFAULT_CONFIG['QUERY_ID'])
 
-
     def run(self, entry:ProcessingEntry) -> ProcessingEntry:
         names = self.detect(entry)
         for name in self.remove_duplicates_list(names):
-            reg = self.general_regex.replace("{0}", re.escape(name))
-            if self._DEFAULT_CONFIG['safe']:
-                entry.code = re.sub(reg, self._DEFAULT_CONFIG['rename_strategy'].get_variable_name()+"@TOKEN@",
-                                    entry.code)
-            else:
-                entry.code = re.sub(reg, self._DEFAULT_CONFIG['rename_strategy'].get_variable_name(),
-                                           entry.code)
+            if random.random() * 100 < int(self._DEFAULT_CONFIG['replacement_probability']):
+                reg = self.general_regex.replace("{0}", re.escape(name))
+                if self._DEFAULT_CONFIG['safe']:
+                    entry.code = re.sub(reg, self._DEFAULT_CONFIG['rename_strategy'].get_variable_name()+"@TOKEN@",
+                                        entry.code)
+                else:
+                    entry.code = re.sub(reg, self._DEFAULT_CONFIG['rename_strategy'].get_variable_name(),
+                                               entry.code)
 
             #self.context.code = re.sub(reg, self.generalize_service.translateVariable(name), self.context.code)
         return entry

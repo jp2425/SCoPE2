@@ -21,7 +21,11 @@ class SaveStringsTr(QueryTransformation):
         self._repo = repo_context.tree_sitter_repo
 
     def run(self, entry: ProcessingEntry) -> ProcessingEntry:
-        strings = entry.detection_result[self._DEFAULT_CONFIG["QUERY_ID"]]
+        try:
+            strings = entry.detection_result[self._DEFAULT_CONFIG["QUERY_ID"]]
+        except:
+            raise Exception("TreeSitter didn't returned any " + self._DEFAULT_CONFIG['QUERY_ID'])
+
         counter = 0
         for string in strings:
             entry.code = entry.code.replace(string, "@STRING_{0}@".format(counter))

@@ -90,6 +90,7 @@ generalize_vars:
       ; ]
 
     QUERY_ID: variable
+    replacement_probability: 50
       
 
 repetition_structures:

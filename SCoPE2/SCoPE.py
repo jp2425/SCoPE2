@@ -31,7 +31,7 @@ class SCoPE:
         """
         self._repository_context.add_repo(repository)
 
-    def process(self, code: str, transformation_list: List[Type[Transformation]], representation: Type[Representation]) -> any:
+    def process(self, code: str, transformation_list: List[Type[Transformation]], representation: Type[Representation], ignore_phases = True) -> any:
         """
        Function that applies transformations to the source code.
       :param code: code to process
@@ -42,9 +42,9 @@ class SCoPE:
       """
 
         dto = InitialDto(code, transformation_list)
-        out = PreProcessingService(self._repository_context).process(dto)
-        out2 = ProcessingService(self._repository_context).process(out)
-        ent = PostProcessService(self._repository_context).process(PostProcessDto(out2.entry, out2.transformations))
+        out = PreProcessingService(self._repository_context, ignore_phases).process(dto)
+        out2 = ProcessingService(self._repository_context, ignore_phases).process(out)
+        ent = PostProcessService(self._repository_context, ignore_phases).process(PostProcessDto(out2.entry, out2.transformations))
         value = representation(self._repository_context).run(ent)
 
         return value

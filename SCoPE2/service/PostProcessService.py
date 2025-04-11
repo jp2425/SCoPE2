@@ -8,8 +8,8 @@ from ..transformation.phases import Phase
 
 class PostProcessService(ProcessService):
 
-    def __init__(self, repo_context: RepositoryContext):
-        super().__init__()
+    def __init__(self, repo_context: RepositoryContext, ignore_phases = True):
+        super().__init__(ignore_phases)
         self._repo = repo_context
 
     def process(self, dto: PostProcessDto) -> any:

@@ -5,7 +5,7 @@ from ..phases import Phase
 from random import randint
 import re
 
-class DeadCodeInjection(RegularTransformation):
+class DeadCodeInjectionTr(RegularTransformation):
 
     TRANSFORMATION_NAME: str = "dead_code_injection"
     _PHASE = Phase.POST_PROCESSING
