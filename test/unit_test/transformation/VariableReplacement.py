@@ -133,11 +133,12 @@ class VariableReplacementTest(unittest.TestCase):
         entry = ProcessingEntry(code)
         v = dict(repo2.language_file[ReplaceVariableNamesTr.TRANSFORMATION_NAME])
         v["rename_strategy"] = MinifyReplacement()
+        v['safe'] = True
         tr = ReplaceVariableNamesTr(context, v)
         entry = repo.parse_code(entry)
         repo.process_query_result(entry, repo.run_query(entry, tr.query()))
         tr.run(entry)
-        print(entry.code.replace("\n",""))
+        print(entry.code)
         assert entry.code.replace("\n","") == r"""        int test_simple_replacement(){            int a@TOKEN@ = 10;             int* b@TOKEN@ = &a@TOKEN@;            char c@TOKEN@[] = "hello world! what a nice a@TOKEN@!\n";            printf("%d, %d\n", a@TOKEN@, *a@TOKEN@);            printf("%s\n", c@TOKEN@);            return 0;        }        """
 
     def test_replacement_cpp(self):
